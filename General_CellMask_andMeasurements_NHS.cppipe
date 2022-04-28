@@ -1,0 +1,303 @@
+CellProfiler Pipeline: http://www.cellprofiler.org
+Version:5
+DateRevision:421
+GitHash:
+ModuleCount:19
+HasImagePlaneDetails:False
+
+Images:[module_num:1|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Use the maximum Z projections for this to save computational time. ', 'Important for later in the pipeline is that all images have to end with _###.tif', 'where # represents a number']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    :
+    Filter images?:Images only
+    Select the rule criteria:and (extension does isimage) (directory doesnot containregexp "[\\\\/]\\.")
+
+Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['', 'IMPORTANT: CLICK ON EXTRACT METADATA']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Extract metadata?:Yes
+    Metadata data type:Text
+    Metadata types:{}
+    Extraction method count:1
+    Metadata extraction method:Extract from image file headers
+    Metadata source:File name
+    Regular expression to extract from file name:^(?P<Plate>.*)_(?P<Well>[A-P][0-9]{2})_s(?P<Site>[0-9])_w(?P<ChannelNumber>[0-9])
+    Regular expression to extract from folder name:(?P<Date>[0-9]{4}_[0-9]{2}_[0-9]{2})$
+    Extract metadata from:All images
+    Select the filtering criteria:and (file does contain "")
+    Metadata file location:Elsewhere...|
+    Match file and image metadata:[]
+    Use case insensitive matching?:No
+    Metadata file name:None
+    Does cached metadata exist?:Yes
+
+NamesAndTypes:[module_num:3|svn_version:'Unknown'|variable_revision_number:8|show_window:False|notes:['', 'CLICK ON UPDATE! ', '', 'NB: change the number of "have C matching" f the colors of your channels where acquired in any other order than Blue, Green, Red, Farred', '']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Assign a name to:Images matching rules
+    Select the image type:Grayscale image
+    Name to assign these images:DNA
+    Match metadata:[]
+    Image set matching method:Order
+    Set intensity range from:Image metadata
+    Assignments count:4
+    Single images count:0
+    Maximum intensity:255.0
+    Process as 3D?:No
+    Relative pixel spacing in X:1.0
+    Relative pixel spacing in Y:1.0
+    Relative pixel spacing in Z:1.0
+    Select the rule criteria:and (metadata does C "0")
+    Name to assign these images:BlueOrig
+    Name to assign these objects:Cell
+    Select the image type:Grayscale image
+    Set intensity range from:Image metadata
+    Maximum intensity:255.0
+    Select the rule criteria:and (metadata does C "1")
+    Name to assign these images:GreenOrig
+    Name to assign these objects:Nucleus
+    Select the image type:Grayscale image
+    Set intensity range from:Image metadata
+    Maximum intensity:255.0
+    Select the rule criteria:and (metadata does C "2")
+    Name to assign these images:RedOrig
+    Name to assign these objects:Nucleus
+    Select the image type:Grayscale image
+    Set intensity range from:Image metadata
+    Maximum intensity:255.0
+    Select the rule criteria:and (metadata does C "3")
+    Name to assign these images:FarrOrig
+    Name to assign these objects:Nucleus
+    Select the image type:Grayscale image
+    Set intensity range from:Image metadata
+    Maximum intensity:255.0
+
+Groups:[module_num:4|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['The Groups module optionally allows you to split your list of images into image subsets (groups) which will be processed independently of each other. Examples of groupings include screening batches, microtiter plates, time-lapse movies, etc.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Do you want to group your images?:No
+    grouping metadata count:1
+    Metadata category:None
+
+IdentifyPrimaryObjects:[module_num:5|svn_version:'Unknown'|variable_revision_number:15|show_window:True|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select the input image:BlueOrig
+    Name the primary objects to be identified:nuclei
+    Typical diameter of objects, in pixel units (Min,Max):120,250
+    Discard objects outside the diameter range?:Yes
+    Discard objects touching the border of the image?:Yes
+    Method to distinguish clumped objects:Shape
+    Method to draw dividing lines between clumped objects:Shape
+    Size of smoothing filter:10
+    Suppress local maxima that are closer than this minimum allowed distance:7.0
+    Speed up by using lower-resolution image to find local maxima?:Yes
+    Fill holes in identified objects?:After both thresholding and declumping
+    Automatically calculate size of smoothing filter for declumping?:Yes
+    Automatically calculate minimum allowed distance between local maxima?:Yes
+    Handling of objects if excessive number of objects identified:Continue
+    Maximum number of objects:500
+    Use advanced settings?:Yes
+    Threshold setting version:12
+    Threshold strategy:Adaptive
+    Thresholding method:Minimum Cross-Entropy
+    Threshold smoothing scale:15
+    Threshold correction factor:1
+    Lower and upper bounds on threshold:0.0017,1
+    Manual threshold:0.0
+    Select the measurement to threshold with:None
+    Two-class or three-class thresholding?:Three classes
+    Log transform before thresholding?:Yes
+    Assign pixels in the middle intensity class to the foreground or the background?:Foreground
+    Size of adaptive window:100
+    Lower outlier fraction:0.05
+    Upper outlier fraction:0.05
+    Averaging method:Mean
+    Variance method:Standard deviation
+    # of deviations:2.0
+    Thresholding method:Minimum Cross-Entropy
+
+IdentifySecondaryObjects:[module_num:6|svn_version:'Unknown'|variable_revision_number:10|show_window:True|notes:['Change according to which channel your NHS is in. It is important to change this pipeline step so that it gives you good outlines depending on the staining you have used.', 'propagation method works best if you have good nhs staining. Distance-B is an elternative if there is not really a cell outline marker and you want to use donutshape/mitochondria']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select the input objects:nuclei
+    Name the objects to be identified:AllCells1
+    Select the method to identify the secondary objects:Distance - B
+    Select the input image:FarrOrig
+    Number of pixels by which to expand the primary objects:250
+    Regularization factor:0.001
+    Discard secondary objects touching the border of the image?:Yes
+    Discard the associated primary objects?:Yes
+    Name the new primary objects:filteredNuclei
+    Fill holes in identified objects?:Yes
+    Threshold setting version:12
+    Threshold strategy:Global
+    Thresholding method:Otsu
+    Threshold smoothing scale:15
+    Threshold correction factor:0.99
+    Lower and upper bounds on threshold:0.0,1
+    Manual threshold:0.0
+    Select the measurement to threshold with:None
+    Two-class or three-class thresholding?:Three classes
+    Log transform before thresholding?:Yes
+    Assign pixels in the middle intensity class to the foreground or the background?:Foreground
+    Size of adaptive window:200
+    Lower outlier fraction:0.05
+    Upper outlier fraction:0.05
+    Averaging method:Mean
+    Variance method:Standard deviation
+    # of deviations:0.5
+    Thresholding method:Otsu
+
+DilateObjects:[module_num:7|svn_version:'Unknown'|variable_revision_number:1|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select the input object:AllCells1
+    Name the output object:AllCels1
+    Structuring element:disk,10
+
+ErodeObjects:[module_num:8|svn_version:'Unknown'|variable_revision_number:1|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select the input object:AllCels1
+    Name the output object:AllCells
+    Structuring element:disk,2
+    Prevent object removal:No
+    Relabel resulting objects:No
+
+IdentifyTertiaryObjects:[module_num:9|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select the larger identified objects:AllCells
+    Select the smaller identified objects:filteredNuclei
+    Name the tertiary objects to be identified:AllCytoplasm
+    Shrink smaller object prior to subtraction?:No
+
+Threshold:[module_num:10|svn_version:'Unknown'|variable_revision_number:12|show_window:False|notes:['This is used to threshold the GFP signal and classify transfected cells']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select the input image:GreenOrig
+    Name the output image:ThresholdGreen
+    Threshold strategy:Global
+    Thresholding method:Otsu
+    Threshold smoothing scale:1.34
+    Threshold correction factor:1
+    Lower and upper bounds on threshold:0.0017,1.0
+    Manual threshold:0.0
+    Select the measurement to threshold with:None
+    Two-class or three-class thresholding?:Three classes
+    Log transform before thresholding?:Yes
+    Assign pixels in the middle intensity class to the foreground or the background?:Background
+    Size of adaptive window:200
+    Lower outlier fraction:0.05
+    Upper outlier fraction:0.05
+    Averaging method:Mean
+    Variance method:Standard deviation
+    # of deviations:2.0
+    Thresholding method:Otsu
+
+ConvertObjectsToImage:[module_num:11|svn_version:'Unknown'|variable_revision_number:1|show_window:False|notes:['the cell masks are converted to grayscale image in which cells are numbered through increasing grey intensity']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select the input objects:AllCells
+    Name the output image:AllCellsGrayscale
+    Select the color format:Grayscale
+    Select the colormap:Default
+
+SaveImages:[module_num:12|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:['IMPORTANT! CHANGE THIS FOLDER MANUALLY TO THE AUTOCBTIFFS FOLDER OF THE IMAGES !!!!']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select the type of image to save:Image
+    Select the image to save:AllCellsGrayscale
+    Select method for constructing file names:From image filename
+    Select image name for file prefix:FarrOrig
+    Enter single file name:OrigBlue
+    Number of digits:4
+    Append a suffix to the image file name?:Yes
+    Text to append to the image name:mask
+    Saved file format:tiff
+    Output file location:Default Input Folder sub-folder|LocalFiles/LAB17/new/AutoCBtiffs
+    Image bit depth:8-bit integer
+    Overwrite existing files without warning?:Yes
+    When to save:Every cycle
+    Record the file and path information to the saved image?:No
+    Create subfolders in the output folder?:No
+    Base image folder:Elsewhere...|
+    How to save the series:T (Time)
+    Save with lossless compression?:Yes
+
+MaskObjects:[module_num:13|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select objects to be masked:AllCells
+    Name the masked objects:TransfectedCells
+    Mask using a region defined by other objects or by binary image?:Image
+    Select the masking object:None
+    Select the masking image:ThresholdGreen
+    Handling of objects that are partially masked:Remove depending on overlap
+    Fraction of object that must overlap:0.01
+    Numbering of resulting objects:Retain
+    Invert the mask?:No
+
+MaskObjects:[module_num:14|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:False|wants_pause:False]
+    Select objects to be masked:AllCells
+    Name the masked objects:NonTransfectedCells
+    Mask using a region defined by other objects or by binary image?:Image
+    Select the masking object:None
+    Select the masking image:ThresholdGreen
+    Handling of objects that are partially masked:Remove
+    Fraction of object that must overlap:0.5
+    Numbering of resulting objects:Retain
+    Invert the mask?:Yes
+
+MaskObjects:[module_num:15|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:False|wants_pause:False]
+    Select objects to be masked:AllCytoplasm
+    Name the masked objects:TransfectedCytoplasm
+    Mask using a region defined by other objects or by binary image?:Image
+    Select the masking object:None
+    Select the masking image:ThresholdGreen
+    Handling of objects that are partially masked:Remove depending on overlap
+    Fraction of object that must overlap:0.25
+    Numbering of resulting objects:Retain
+    Invert the mask?:No
+
+MaskObjects:[module_num:16|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:False|wants_pause:False]
+    Select objects to be masked:AllCytoplasm
+    Name the masked objects:NonTransfectedCytoplasms
+    Mask using a region defined by other objects or by binary image?:Image
+    Select the masking object:None
+    Select the masking image:ThresholdGreen
+    Handling of objects that are partially masked:Remove
+    Fraction of object that must overlap:0.9
+    Numbering of resulting objects:Retain
+    Invert the mask?:Yes
+
+MeasureObjectIntensity:[module_num:17|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:['This will create an output file with all kind of intensity measurements. ']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select images to measure:BlueOrig, FarrOrig, GreenOrig, RedOrig, ThresholdGreen
+    Select objects to measure:AllCells, AllCytoplasm, TransfectedCells, filteredNuclei, nuclei
+
+MeasureObjectIntensityDistribution:[module_num:18|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['This can be used to find the MDF value in R. NOTE: THIS ONLY MAKES SENSE IF THE CELLOUTLINES ARE RELIABLE ']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select images to measure:FarrOrig, GreenOrig, RedOrig, ThresholdGreen
+    Hidden:1
+    Hidden:1
+    Hidden:2
+    Calculate intensity Zernikes?:None
+    Maximum zernike moment:9
+    Select objects to measure:AllCytoplasm
+    Object to use as center?:These objects
+    Select objects to use as centers:filteredNuclei
+    Scale the bins?:Yes
+    Number of bins:20
+    Maximum radius:100
+    Image:FarrOrig
+    Objects to display:Do not use
+    Number of bins:10
+    Measurement:Fraction at Distance
+    Color map:Purples_r
+    Save display as image?:No
+    Output image name:Heatmap
+    Image:GreenOrig
+    Objects to display:Do not use
+    Number of bins:10
+    Measurement:Fraction at Distance
+    Color map:Blues_r
+    Save display as image?:No
+    Output image name:Heatmap
+
+ExportToSpreadsheet:[module_num:19|svn_version:'Unknown'|variable_revision_number:13|show_window:False|notes:['IMPORTANT: Change folder manually to your folder that contains the maxZ and autoCBtiffs folders.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+    Select the column delimiter:Comma (",")
+    Add image metadata columns to your object data file?:No
+    Add image file and folder names to your object data file?:Yes
+    Select the measurements to export:Yes
+    Calculate the per-image mean values for object measurements?:No
+    Calculate the per-image median values for object measurements?:No
+    Calculate the per-image standard deviation values for object measurements?:No
+    Output file location:Default Input Folder sub-folder|LocalFiles/LAB17/new
+    Create a GenePattern GCT file?:No
+    Select source of sample row name:Metadata
+    Select the image to use as the identifier:None
+    Select the metadata to use as the identifier:None
+    Export all measurement types?:Yes
+    Press button to select measurements:AllCytoplasm|RadialDistribution_RadialCV_RedOrig_5of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_2of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_20of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_9of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_10of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_19of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_1of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_17of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_11of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_15of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_8of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_14of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_3of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_4of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_12of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_6of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_13of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_18of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_7of20,AllCytoplasm|RadialDistribution_RadialCV_RedOrig_16of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_20of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_13of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_16of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_6of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_2of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_19of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_12of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_8of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_5of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_14of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_15of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_4of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_10of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_9of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_17of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_7of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_3of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_1of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_11of20,AllCytoplasm|RadialDistribution_RadialCV_ThresholdGreen_18of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_17of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_11of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_8of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_16of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_5of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_1of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_2of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_12of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_6of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_14of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_10of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_20of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_4of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_13of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_3of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_18of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_15of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_19of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_9of20,AllCytoplasm|RadialDistribution_RadialCV_GreenOrig_7of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_11of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_1of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_13of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_4of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_18of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_20of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_6of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_5of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_10of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_15of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_17of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_2of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_14of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_7of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_8of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_9of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_3of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_12of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_16of20,AllCytoplasm|RadialDistribution_RadialCV_FarrOrig_19of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_10of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_19of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_20of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_17of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_18of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_9of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_16of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_15of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_4of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_12of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_5of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_13of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_1of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_2of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_7of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_8of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_3of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_14of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_6of20,AllCytoplasm|RadialDistribution_FracAtD_ThresholdGreen_11of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_14of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_12of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_2of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_6of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_20of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_13of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_8of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_5of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_7of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_17of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_3of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_16of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_1of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_10of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_4of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_18of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_15of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_11of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_19of20,AllCytoplasm|RadialDistribution_FracAtD_RedOrig_9of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_12of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_14of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_18of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_13of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_6of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_1of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_9of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_10of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_5of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_3of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_2of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_17of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_20of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_16of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_4of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_11of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_15of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_8of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_7of20,AllCytoplasm|RadialDistribution_FracAtD_GreenOrig_19of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_6of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_15of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_18of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_10of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_1of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_19of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_4of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_5of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_12of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_16of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_13of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_7of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_9of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_20of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_14of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_17of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_2of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_8of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_11of20,AllCytoplasm|RadialDistribution_FracAtD_FarrOrig_3of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_19of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_18of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_11of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_14of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_3of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_1of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_4of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_7of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_12of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_5of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_16of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_20of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_13of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_2of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_6of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_9of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_10of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_17of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_8of20,AllCytoplasm|RadialDistribution_MeanFrac_FarrOrig_15of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_1of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_13of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_19of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_9of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_7of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_20of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_4of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_8of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_14of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_16of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_15of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_12of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_5of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_6of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_3of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_18of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_11of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_10of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_17of20,AllCytoplasm|RadialDistribution_MeanFrac_RedOrig_2of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_11of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_14of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_8of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_13of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_6of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_17of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_15of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_9of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_10of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_12of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_18of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_7of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_5of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_4of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_3of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_1of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_19of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_20of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_2of20,AllCytoplasm|RadialDistribution_MeanFrac_ThresholdGreen_16of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_5of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_10of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_18of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_19of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_13of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_11of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_14of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_12of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_8of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_20of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_2of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_1of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_3of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_7of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_17of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_9of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_16of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_4of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_15of20,AllCytoplasm|RadialDistribution_MeanFrac_GreenOrig_6of20,AllCytoplasm|Intensity_MADIntensity_BlueOrig,AllCytoplasm|Intensity_MADIntensity_FarrOrig,AllCytoplasm|Intensity_MADIntensity_ThresholdGreen,AllCytoplasm|Intensity_MADIntensity_RedOrig,AllCytoplasm|Intensity_MADIntensity_GreenOrig,AllCytoplasm|Intensity_MinIntensityEdge_ThresholdGreen,AllCytoplasm|Intensity_MinIntensityEdge_FarrOrig,AllCytoplasm|Intensity_MinIntensityEdge_BlueOrig,AllCytoplasm|Intensity_MinIntensityEdge_RedOrig,AllCytoplasm|Intensity_MinIntensityEdge_GreenOrig,AllCytoplasm|Intensity_StdIntensityEdge_RedOrig,AllCytoplasm|Intensity_StdIntensityEdge_BlueOrig,AllCytoplasm|Intensity_StdIntensityEdge_ThresholdGreen,AllCytoplasm|Intensity_StdIntensityEdge_FarrOrig,AllCytoplasm|Intensity_StdIntensityEdge_GreenOrig,AllCytoplasm|Intensity_IntegratedIntensity_BlueOrig,AllCytoplasm|Intensity_IntegratedIntensity_FarrOrig,AllCytoplasm|Intensity_IntegratedIntensity_ThresholdGreen,AllCytoplasm|Intensity_IntegratedIntensity_RedOrig,AllCytoplasm|Intensity_IntegratedIntensity_GreenOrig,AllCytoplasm|Intensity_MeanIntensity_RedOrig,AllCytoplasm|Intensity_MeanIntensity_BlueOrig,AllCytoplasm|Intensity_MeanIntensity_ThresholdGreen,AllCytoplasm|Intensity_MeanIntensity_GreenOrig,AllCytoplasm|Intensity_MeanIntensity_FarrOrig,AllCytoplasm|Intensity_MaxIntensity_ThresholdGreen,AllCytoplasm|Intensity_MaxIntensity_GreenOrig,AllCytoplasm|Intensity_MaxIntensity_RedOrig,AllCytoplasm|Intensity_MaxIntensity_BlueOrig,AllCytoplasm|Intensity_MaxIntensity_FarrOrig,AllCytoplasm|Intensity_StdIntensity_RedOrig,AllCytoplasm|Intensity_StdIntensity_GreenOrig,AllCytoplasm|Intensity_StdIntensity_FarrOrig,AllCytoplasm|Intensity_StdIntensity_ThresholdGreen,AllCytoplasm|Intensity_StdIntensity_BlueOrig,AllCytoplasm|Intensity_MassDisplacement_RedOrig,AllCytoplasm|Intensity_MassDisplacement_BlueOrig,AllCytoplasm|Intensity_MassDisplacement_ThresholdGreen,AllCytoplasm|Intensity_MassDisplacement_FarrOrig,AllCytoplasm|Intensity_MassDisplacement_GreenOrig,AllCytoplasm|Intensity_MeanIntensityEdge_GreenOrig,AllCytoplasm|Intensity_MeanIntensityEdge_ThresholdGreen,AllCytoplasm|Intensity_MeanIntensityEdge_RedOrig,AllCytoplasm|Intensity_MeanIntensityEdge_FarrOrig,AllCytoplasm|Intensity_MeanIntensityEdge_BlueOrig,AllCytoplasm|Intensity_UpperQuartileIntensity_FarrOrig,AllCytoplasm|Intensity_UpperQuartileIntensity_RedOrig,AllCytoplasm|Intensity_UpperQuartileIntensity_BlueOrig,AllCytoplasm|Intensity_UpperQuartileIntensity_GreenOrig,AllCytoplasm|Intensity_UpperQuartileIntensity_ThresholdGreen,AllCytoplasm|Intensity_LowerQuartileIntensity_RedOrig,AllCytoplasm|Intensity_LowerQuartileIntensity_FarrOrig,AllCytoplasm|Intensity_LowerQuartileIntensity_ThresholdGreen,AllCytoplasm|Intensity_LowerQuartileIntensity_BlueOrig,AllCytoplasm|Intensity_LowerQuartileIntensity_GreenOrig,AllCytoplasm|Intensity_MaxIntensityEdge_RedOrig,AllCytoplasm|Intensity_MaxIntensityEdge_ThresholdGreen,AllCytoplasm|Intensity_MaxIntensityEdge_FarrOrig,AllCytoplasm|Intensity_MaxIntensityEdge_GreenOrig,AllCytoplasm|Intensity_MaxIntensityEdge_BlueOrig,AllCytoplasm|Intensity_MinIntensity_FarrOrig,AllCytoplasm|Intensity_MinIntensity_ThresholdGreen,AllCytoplasm|Intensity_MinIntensity_GreenOrig,AllCytoplasm|Intensity_MinIntensity_RedOrig,AllCytoplasm|Intensity_MinIntensity_BlueOrig,AllCytoplasm|Intensity_MedianIntensity_GreenOrig,AllCytoplasm|Intensity_MedianIntensity_ThresholdGreen,AllCytoplasm|Intensity_MedianIntensity_RedOrig,AllCytoplasm|Intensity_MedianIntensity_BlueOrig,AllCytoplasm|Intensity_MedianIntensity_FarrOrig,AllCytoplasm|Intensity_IntegratedIntensityEdge_RedOrig,AllCytoplasm|Intensity_IntegratedIntensityEdge_ThresholdGreen,AllCytoplasm|Intensity_IntegratedIntensityEdge_BlueOrig,AllCytoplasm|Intensity_IntegratedIntensityEdge_GreenOrig,AllCytoplasm|Intensity_IntegratedIntensityEdge_FarrOrig,AllCytoplasm|Location_Center_Y,AllCytoplasm|Location_Center_X,AllCytoplasm|Number_Object_Number,AllCytoplasm|Parent_AllCells,AllCytoplasm|Parent_filteredNuclei,TransfectedCells|Number_Object_Number,TransfectedCells|Parent_AllCells,AllCells|Location_MaxIntensity_Z_GreenOrig,AllCells|Location_MaxIntensity_Z_ThresholdGreen,AllCells|Location_MaxIntensity_Z_BlueOrig,AllCells|Location_MaxIntensity_Z_RedOrig,AllCells|Location_MaxIntensity_Z_FarrOrig,AllCells|Location_MaxIntensity_X_GreenOrig,AllCells|Location_MaxIntensity_X_BlueOrig,AllCells|Location_MaxIntensity_X_ThresholdGreen,AllCells|Location_MaxIntensity_X_FarrOrig,AllCells|Location_MaxIntensity_X_RedOrig,AllCells|Location_MaxIntensity_Y_BlueOrig,AllCells|Location_MaxIntensity_Y_FarrOrig,AllCells|Location_MaxIntensity_Y_ThresholdGreen,AllCells|Location_MaxIntensity_Y_GreenOrig,AllCells|Location_MaxIntensity_Y_RedOrig,AllCells|Location_CenterMassIntensity_Y_RedOrig,AllCells|Location_CenterMassIntensity_Y_GreenOrig,AllCells|Location_CenterMassIntensity_Y_FarrOrig,AllCells|Location_CenterMassIntensity_Y_ThresholdGreen,AllCells|Location_CenterMassIntensity_Y_BlueOrig,AllCells|Location_CenterMassIntensity_X_FarrOrig,AllCells|Location_CenterMassIntensity_X_GreenOrig,AllCells|Location_CenterMassIntensity_X_BlueOrig,AllCells|Location_CenterMassIntensity_X_RedOrig,AllCells|Location_CenterMassIntensity_X_ThresholdGreen,AllCells|Location_CenterMassIntensity_Z_FarrOrig,AllCells|Location_CenterMassIntensity_Z_ThresholdGreen,AllCells|Location_CenterMassIntensity_Z_RedOrig,AllCells|Location_CenterMassIntensity_Z_BlueOrig,AllCells|Location_CenterMassIntensity_Z_GreenOrig,AllCells|Location_Center_X,AllCells|Location_Center_Z,AllCells|Location_Center_Y,AllCells|Intensity_MeanIntensity_GreenOrig,AllCells|Intensity_MeanIntensity_RedOrig,AllCells|Intensity_MeanIntensity_ThresholdGreen,AllCells|Intensity_MeanIntensity_FarrOrig,AllCells|Intensity_MeanIntensity_BlueOrig,AllCells|Intensity_UpperQuartileIntensity_BlueOrig,AllCells|Intensity_UpperQuartileIntensity_RedOrig,AllCells|Intensity_UpperQuartileIntensity_ThresholdGreen,AllCells|Intensity_UpperQuartileIntensity_FarrOrig,AllCells|Intensity_UpperQuartileIntensity_GreenOrig,AllCells|Intensity_MedianIntensity_GreenOrig,AllCells|Intensity_MedianIntensity_FarrOrig,AllCells|Intensity_MedianIntensity_ThresholdGreen,AllCells|Intensity_MedianIntensity_BlueOrig,AllCells|Intensity_MedianIntensity_RedOrig,AllCells|Intensity_MaxIntensity_GreenOrig,AllCells|Intensity_MaxIntensity_RedOrig,AllCells|Intensity_MaxIntensity_BlueOrig,AllCells|Intensity_MaxIntensity_ThresholdGreen,AllCells|Intensity_MaxIntensity_FarrOrig,AllCells|Intensity_MinIntensity_FarrOrig,AllCells|Intensity_MinIntensity_BlueOrig,AllCells|Intensity_MinIntensity_GreenOrig,AllCells|Intensity_MinIntensity_RedOrig,AllCells|Intensity_MinIntensity_ThresholdGreen,AllCells|Intensity_LowerQuartileIntensity_BlueOrig,AllCells|Intensity_LowerQuartileIntensity_FarrOrig,AllCells|Intensity_LowerQuartileIntensity_GreenOrig,AllCells|Intensity_LowerQuartileIntensity_RedOrig,AllCells|Intensity_LowerQuartileIntensity_ThresholdGreen,AllCells|Intensity_MassDisplacement_RedOrig,AllCells|Intensity_MassDisplacement_BlueOrig,AllCells|Intensity_MassDisplacement_ThresholdGreen,AllCells|Intensity_MassDisplacement_FarrOrig,AllCells|Intensity_MassDisplacement_GreenOrig,AllCells|Intensity_IntegratedIntensity_ThresholdGreen,AllCells|Intensity_IntegratedIntensity_BlueOrig,AllCells|Intensity_IntegratedIntensity_RedOrig,AllCells|Intensity_IntegratedIntensity_FarrOrig,AllCells|Intensity_IntegratedIntensity_GreenOrig,AllCells|Intensity_StdIntensity_BlueOrig,AllCells|Intensity_StdIntensity_RedOrig,AllCells|Intensity_StdIntensity_ThresholdGreen,AllCells|Intensity_StdIntensity_FarrOrig,AllCells|Intensity_StdIntensity_GreenOrig,AllCells|Intensity_MADIntensity_RedOrig,AllCells|Intensity_MADIntensity_BlueOrig,AllCells|Intensity_MADIntensity_ThresholdGreen,AllCells|Intensity_MADIntensity_GreenOrig,AllCells|Intensity_MADIntensity_FarrOrig,AllCells|Parent_AllCels1,AllCells|Children_TransfectedCells_Count,AllCells|Children_AllCytoplasm_Count,AllCells|Number_Object_Number,filteredNuclei|Intensity_MassDisplacement_RedOrig,filteredNuclei|Intensity_MassDisplacement_GreenOrig,filteredNuclei|Intensity_MassDisplacement_ThresholdGreen,filteredNuclei|Intensity_MassDisplacement_FarrOrig,filteredNuclei|Intensity_MassDisplacement_BlueOrig,filteredNuclei|Intensity_MinIntensityEdge_FarrOrig,filteredNuclei|Intensity_MinIntensityEdge_ThresholdGreen,filteredNuclei|Intensity_MinIntensityEdge_GreenOrig,filteredNuclei|Intensity_MinIntensityEdge_RedOrig,filteredNuclei|Intensity_MinIntensityEdge_BlueOrig,filteredNuclei|Intensity_MedianIntensity_BlueOrig,filteredNuclei|Intensity_MedianIntensity_GreenOrig,filteredNuclei|Intensity_MedianIntensity_ThresholdGreen,filteredNuclei|Intensity_MedianIntensity_FarrOrig,filteredNuclei|Intensity_MedianIntensity_RedOrig,filteredNuclei|Intensity_MaxIntensityEdge_GreenOrig,filteredNuclei|Intensity_MaxIntensityEdge_RedOrig,filteredNuclei|Intensity_MaxIntensityEdge_BlueOrig,filteredNuclei|Intensity_MaxIntensityEdge_FarrOrig,filteredNuclei|Intensity_MaxIntensityEdge_ThresholdGreen,filteredNuclei|Intensity_MeanIntensityEdge_FarrOrig,filteredNuclei|Intensity_MeanIntensityEdge_BlueOrig,filteredNuclei|Intensity_MeanIntensityEdge_ThresholdGreen,filteredNuclei|Intensity_MeanIntensityEdge_RedOrig,filteredNuclei|Intensity_MeanIntensityEdge_GreenOrig,filteredNuclei|Intensity_StdIntensity_BlueOrig,filteredNuclei|Intensity_StdIntensity_ThresholdGreen,filteredNuclei|Intensity_StdIntensity_FarrOrig,filteredNuclei|Intensity_StdIntensity_GreenOrig,filteredNuclei|Intensity_StdIntensity_RedOrig,filteredNuclei|Intensity_LowerQuartileIntensity_FarrOrig,filteredNuclei|Intensity_LowerQuartileIntensity_GreenOrig,filteredNuclei|Intensity_LowerQuartileIntensity_BlueOrig,filteredNuclei|Intensity_LowerQuartileIntensity_ThresholdGreen,filteredNuclei|Intensity_LowerQuartileIntensity_RedOrig,filteredNuclei|Intensity_MeanIntensity_GreenOrig,filteredNuclei|Intensity_MeanIntensity_BlueOrig,filteredNuclei|Intensity_MeanIntensity_RedOrig,filteredNuclei|Intensity_MeanIntensity_ThresholdGreen,filteredNuclei|Intensity_MeanIntensity_FarrOrig,filteredNuclei|Intensity_MaxIntensity_ThresholdGreen,filteredNuclei|Intensity_MaxIntensity_FarrOrig,filteredNuclei|Intensity_MaxIntensity_RedOrig,filteredNuclei|Intensity_MaxIntensity_BlueOrig,filteredNuclei|Intensity_MaxIntensity_GreenOrig,filteredNuclei|Intensity_IntegratedIntensity_BlueOrig,filteredNuclei|Intensity_IntegratedIntensity_GreenOrig,filteredNuclei|Intensity_IntegratedIntensity_FarrOrig,filteredNuclei|Intensity_IntegratedIntensity_RedOrig,filteredNuclei|Intensity_IntegratedIntensity_ThresholdGreen,filteredNuclei|Intensity_StdIntensityEdge_FarrOrig,filteredNuclei|Intensity_StdIntensityEdge_RedOrig,filteredNuclei|Intensity_StdIntensityEdge_ThresholdGreen,filteredNuclei|Intensity_StdIntensityEdge_GreenOrig,filteredNuclei|Intensity_StdIntensityEdge_BlueOrig,filteredNuclei|Intensity_MinIntensity_ThresholdGreen,filteredNuclei|Intensity_MinIntensity_BlueOrig,filteredNuclei|Intensity_MinIntensity_RedOrig,filteredNuclei|Intensity_MinIntensity_GreenOrig,filteredNuclei|Intensity_MinIntensity_FarrOrig,filteredNuclei|Intensity_MADIntensity_FarrOrig,filteredNuclei|Intensity_MADIntensity_RedOrig,filteredNuclei|Intensity_MADIntensity_BlueOrig,filteredNuclei|Intensity_MADIntensity_ThresholdGreen,filteredNuclei|Intensity_MADIntensity_GreenOrig,filteredNuclei|Intensity_UpperQuartileIntensity_GreenOrig,filteredNuclei|Intensity_UpperQuartileIntensity_RedOrig,filteredNuclei|Intensity_UpperQuartileIntensity_FarrOrig,filteredNuclei|Intensity_UpperQuartileIntensity_ThresholdGreen,filteredNuclei|Intensity_UpperQuartileIntensity_BlueOrig,filteredNuclei|Intensity_IntegratedIntensityEdge_BlueOrig,filteredNuclei|Intensity_IntegratedIntensityEdge_ThresholdGreen,filteredNuclei|Intensity_IntegratedIntensityEdge_FarrOrig,filteredNuclei|Intensity_IntegratedIntensityEdge_RedOrig,filteredNuclei|Intensity_IntegratedIntensityEdge_GreenOrig,filteredNuclei|Number_Object_Number
+    Representation of Nan/Inf:NaN
+    Add a prefix to file names?:Yes
+    Filename prefix:CP_measurements
+    Overwrite existing files without warning?:Yes
+    Data to export:Do not use
+    Combine these object measurements with those of the previous object?:No
+    File name:DATA.csv
+    Use the object name for the file name?:Yes
